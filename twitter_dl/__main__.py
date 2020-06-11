@@ -76,7 +76,8 @@ def main():
     parser.add_argument(
         "--search",
         help="search twitter using keyword(resource_id)",
-        default=False,
+        default=None,
+        choices=["recent", "popular", "mixed"],
         action="store_true",
     )    
     args = parser.parse_args()
@@ -121,9 +122,9 @@ def main():
                     except Exception as e:
                         pass
             downloader.d.join()
-    elif args.search:
+    elif args.search is not None:
         downloader.download_media_of_search(args.resource_id, args.dest, args.size, 
-            args.limit, args.rts, args.video, args.photo, args.since)
+            args.limit, args.rts, args.video, args.photo, args.since, args.search)
         downloader.d.join()
     else:
         downloader.download_media_of_user(args.resource_id, args.dest, args.size, 

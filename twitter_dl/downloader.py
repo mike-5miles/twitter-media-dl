@@ -61,7 +61,7 @@ class Downloader:
             raise RuntimeError("Bearer TokenNot Fetched")
 
     def download_media_of_search(self, keyword, save_dest, size="large", limit=3200, rts=False, 
-        include_video=False, include_photo=True, since_id=0):
+        include_video=False, include_photo=True, since_id=0, search_type='recent'):
         """Download and save images that user uploaded.
 
         Args:
@@ -73,7 +73,7 @@ class Downloader:
 
         save_dest = ensure_dir(save_dest)
 
-        alltweets = self.get_search_tweets(keyword, None, limit, rts, since_id)
+        alltweets = self.get_search_tweets(keyword, None, limit, rts, since_id, search_type)
         user_file = "{}/{}.json".format(save_dest, keyword)
         data = {
             "time": time.time(),
@@ -195,7 +195,7 @@ class Downloader:
 
         return self.api_fetch_tweets(apiurl, payload, start, count, rts, since_id)
 
-    def get_search_tweets(self, keyword, start=None, count=100, rts=False, since_id=0):
+    def get_search_tweets(self, keyword, start=None, count=100, rts=False, since_id=0, search_type):
         """Download user's tweets and return them as a list.
 
         Args:
@@ -206,9 +206,9 @@ class Downloader:
 
         apiurl = "https://api.twitter.com/1.1/search/tweets.json"
         payload = {
-            "q": urllib.parse.quote(keyword.replace("_", "")),
+            "q": keyword, #urllib.parse.quote(keyword.replace("_", "")),
             "lang": "en",
-            "result_type": "recent"
+            "result_type": search_type
             }
 
         return self.api_fetch_tweets(apiurl, payload, start, count, rts, since_id)
