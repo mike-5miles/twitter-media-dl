@@ -121,7 +121,7 @@ def main():
                     except Exception as e:
                         pass
             downloader.d.join()
-    elif ars.search:
+    elif args.search:
         downloader.download_media_of_search(args.resource_id, args.dest, args.size, 
             args.limit, args.rts, args.video, args.photo, args.since)
         downloader.d.join()
