@@ -195,7 +195,7 @@ class Downloader:
 
         return self.api_fetch_tweets(apiurl, payload, start, count, rts, since_id)
 
-    def get_search_tweets(self, keyword, start=None, count=100, rts=False, since_id=0, search_type):
+    def get_search_tweets(self, keyword, start=None, count=100, rts=False, since_id=0, search_type='recent'):
         """Download user's tweets and return them as a list.
 
         Args:
