@@ -73,14 +73,14 @@ class Downloader:
         save_dest = ensure_dir(save_dest)
 
         alltweets = self.get_search_tweets(keyword, None, limit, rts, since_id)
-        user_file = "{}/{}.json".format(save_dest, get_search_tweets)
+        user_file = "{}/{}.json".format(save_dest, keyword)
         data = {
             "time": time.time(),
             "tweets": alltweets
         }
         save_json_file(user_file, data)
         #print(alltweets)
-        self.log.info(f"{get_search_tweets} Got {len(alltweets)} tweets")
+        self.log.info(f"{keyword} keyword Got {len(alltweets)} tweets")
         for tweet in alltweets:
             self.process_tweet(tweet, save_dest, include_video=include_video, include_photo=include_photo)
 
