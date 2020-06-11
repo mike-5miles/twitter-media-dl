@@ -72,6 +72,12 @@ def main():
     parser.add_argument('-v', '--verbose', action='count', default=0)
     parser.add_argument(
         "--subdir", help="add subdir for each user", default=False, action="store_true"
+    )
+    parser.add_argument(
+        "--search",
+        help="search twitter using keyword(resource_id)",
+        default=False,
+        action="store_true",
     )    
     args = parser.parse_args()
 
@@ -115,6 +121,10 @@ def main():
                     except Exception as e:
                         pass
             downloader.d.join()
+    elif ars.search:
+        downloader.download_media_of_search(args.resource_id, args.dest, args.size, 
+            args.limit, args.rts, args.video, args.photo, args.since)
+        downloader.d.join()
     else:
         downloader.download_media_of_user(args.resource_id, args.dest, args.size, 
             args.limit, args.rts, args.video, args.photo, args.since)

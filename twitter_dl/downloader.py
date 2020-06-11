@@ -59,6 +59,32 @@ class Downloader:
         else:
             raise RuntimeError("Bearer TokenNot Fetched")
 
+    def download_media_of_search(self, keyword, save_dest, size="large", limit=3200, rts=False, 
+        include_video=False, include_photo=True, since_id=0):
+        """Download and save images that user uploaded.
+
+        Args:
+            user: User ID.
+            save_dest: The directory where images will be saved.
+            size: Which size of images to download.
+            rts: Whether to include retweets or not.
+        """
+
+        save_dest = ensure_dir(save_dest)
+
+        alltweets = self.get_search_tweets(keyword, None, limit, rts, since_id)
+        user_file = "{}/{}.json".format(save_dest, get_search_tweets)
+        data = {
+            "time": time.time(),
+            "tweets": alltweets
+        }
+        save_json_file(user_file, data)
+        #print(alltweets)
+        self.log.info(f"{get_search_tweets} Got {len(alltweets)} tweets")
+        for tweet in alltweets:
+            self.process_tweet(tweet, save_dest, include_video=include_video, include_photo=include_photo)
+
+
     def download_media_of_tweet(self, tid, save_dest, size="large", include_video=False, 
             include_photo=True):
         ''' '''    
@@ -130,7 +156,11 @@ class Downloader:
             # check the response
             tweets = []
             if r.status_code == 200:
-                tweets = r.json()
+                data = r.json()
+                if type(data).__name__ == "dict" and "statuses" in data:
+                    tweets = data["statuses"]
+                else:
+                    tweets = data
             else:
                 self.log.error(f"{url} error, code: {r.status_code}")
             
@@ -161,6 +191,24 @@ class Downloader:
 
         apiurl = "https://api.twitter.com/1.1/statuses/user_timeline.json"
         payload = {"screen_name": user}
+
+        return self.api_fetch_tweets(apiurl, payload, start, count, rts, since_id)
+
+    def get_search_tweets(self, keyword, start=None, count=100, rts=False, since_id=0):
+        """Download user's tweets and return them as a list.
+
+        Args:
+            user: User ID.
+            start: Tweet ID.
+            rts: Whether to include retweets or not.
+        """
+
+        apiurl = "https://api.twitter.com/1.1/search/tweets.json"
+        payload = {
+            "q": keyword,
+            "lang": "en",
+            "result_type": "recent"
+            }
 
         return self.api_fetch_tweets(apiurl, payload, start, count, rts, since_id)
 
