@@ -6,6 +6,7 @@ import json
 import time
 
 import requests
+import urllib.parse
 
 from .threaded_aio_dlder import AioDownloader
 
@@ -205,7 +206,7 @@ class Downloader:
 
         apiurl = "https://api.twitter.com/1.1/search/tweets.json"
         payload = {
-            "q": keyword,
+            "q": urllib.parse.quote(keyword.replace("_", "")),
             "lang": "en",
             "result_type": "recent"
             }
