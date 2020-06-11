@@ -76,8 +76,9 @@ def main():
     parser.add_argument(
         "--search",
         help="search twitter using keyword(resource_id)",
-        default=None,
-        choices=["recent", "popular", "mixed"],
+        default="recent",
+        type=str,
+        #choices=["recent", "popular", "mixed"],
         action="store_true",
     )    
     args = parser.parse_args()
