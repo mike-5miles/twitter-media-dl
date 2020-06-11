@@ -3,6 +3,7 @@ import sys
 import logging
 import base64
 import json
+import time
 
 import requests
 
@@ -14,6 +15,10 @@ def ensure_dir(directory):
     if not os.path.exists(directory):
         os.makedirs(directory, exist_ok=True)
     return directory
+
+def save_json_file(file, data):
+    with open(file, 'w') as result_file:
+        json.dump(data, result_file)
 
 class Downloader:
     def __init__(self, api_key, api_secret, bearer_token=None, thread_number=2, coro_number=5):
@@ -76,6 +81,13 @@ class Downloader:
         save_dest = ensure_dir(save_dest)
 
         alltweets = self.get_user_tweets(user, None, limit, rts, since_id)
+        user_file = "{}/{}.json".format(save_dest, user)
+        data = {
+            "time": time.time(),
+            "tweets": alltweets
+        }
+        save_json_file(user_file, data)
+        #print(alltweets)
         self.log.info(f"{user} Got {len(alltweets)} tweets")
         for tweet in alltweets:
             self.process_tweet(tweet, save_dest, include_video=include_video, include_photo=include_photo)
@@ -221,11 +233,15 @@ class Downloader:
                 if x["type"] == "photo" and include_photo: 
                     url = x["media_url"]
                     rv.append(url)
-                elif x["type"] in ["video", "animated_gif"] and include_video:
+                #elif x["type"] in ["video", "animated_gif"] and include_video:
+                elif x["type"] in ["video"] and include_video:
                     variants = x["video_info"]["variants"]
                     variants.sort(key=lambda x: x.get("bitrate", 0))
                     url = variants[-1]["url"].rsplit("?tag")[0]
                     rv.append(url)
+                    if "media_url" in x:
+                        rv.append(x["media_url"])
+
         return rv
 
     def save_media(self, image, path, name, size="large"):
