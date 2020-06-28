@@ -77,7 +77,7 @@ def main():
         "--search",
         help="search twitter using keyword(resource_id)",
         default="recent",
-        type=str,
+        #type=str,
         #choices=["recent", "popular", "mixed"],
         action="store_true",
     )    
